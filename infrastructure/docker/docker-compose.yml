@@ -1,0 +1,37 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: rudiment-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: rudiment
+      POSTGRES_PASSWORD: rudiment_dev
+      POSTGRES_DB: rudiment_db
+    volumes:
+      - rudiment_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rudiment -d rudiment_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: rudiment-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: redis-server --requirepass rudiment_dev
+    volumes:
+      - rudiment_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "rudiment_dev", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  rudiment_postgres_data:
+  rudiment_redis_data:

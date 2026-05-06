@@ -13,12 +13,12 @@ type EventPayloads = {
 type EventName = keyof EventPayloads;
 
 class TypedEventBus extends EventEmitter {
-  emit<K extends EventName>(event: K, payload: EventPayloads[K]): boolean {
+  override emit<K extends EventName>(event: K, payload: EventPayloads[K]): boolean {
     logger.debug({ event, payload }, "Event emitted");
     return super.emit(event, payload);
   }
 
-  on<K extends EventName>(
+  override on<K extends EventName>(
     event: K,
     listener: (payload: EventPayloads[K]) => void | Promise<void>,
   ): this {

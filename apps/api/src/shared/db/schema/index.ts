@@ -1,4 +1,8 @@
-// Schema barrel — export all tables so drizzle has the full schema
-// Tables will be added here as each phase is implemented
-
 export * from "./users.js";
+export * from "./billing.js";
+export * from "./entitlements.js";
+export * from "./courses.js";
+export * from "./video.js";
+export * from "./media.js";
+export * from "./progress.js";
+export * from "./analytics.js";

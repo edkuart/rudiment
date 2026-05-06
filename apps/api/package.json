@@ -15,6 +15,7 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@paralleldrive/cuid2": "^3.3.0",
     "@rudiment/types": "*",
     "@sentry/node": "^8.51.0",
     "bcryptjs": "^3.0.2",

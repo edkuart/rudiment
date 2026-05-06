@@ -9,6 +9,8 @@ import { requestLogger } from "./shared/middleware/request-logger.js";
 import { errorHandler } from "./shared/middleware/error-handler.js";
 import { logger } from "./shared/utils/logger.js";
 import { authRouter } from "./modules/auth/auth.router.js";
+import { billingRouter } from "./modules/billing/billing.router.js";
+import "./modules/entitlements/index.js"; // registra event listeners
 
 const app = express();
 
@@ -42,6 +44,7 @@ app.get("/health", (_req, res) => {
 });
 
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/billing", billingRouter);
 
 // 404 handler
 app.use((_req, res) => {

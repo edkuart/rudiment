@@ -6,3 +6,4 @@ export * from "./video.js";
 export * from "./media.js";
 export * from "./progress.js";
 export * from "./analytics.js";
+export * from "../relations.js";

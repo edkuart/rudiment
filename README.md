@@ -21,8 +21,8 @@ Plataforma premium de membresía educativa para bateristas.
 ```
 rudiment/
 ├── apps/
-│   ├── web/          Next.js frontend
-│   └── api/          Express backend
+│   ├── frontend/     Next.js frontend
+│   └── backend/      Express backend
 ├── packages/
 │   ├── types/        Tipos TypeScript compartidos
 │   └── config/       TSConfig, ESLint base configs
@@ -43,10 +43,10 @@ npm install
 
 ```bash
 # Backend
-cp .env.example apps/api/.env
+cp .env.example apps/backend/.env
 
 # Frontend
-cp .env.example apps/web/.env.local
+cp .env.example apps/frontend/.env.local
 ```
 
 Editar ambos archivos con los valores correctos.
@@ -65,8 +65,9 @@ docker compose -f infrastructure/docker/docker-compose.yml up -d
 ### 4. Migraciones
 
 ```bash
-npm run db:generate -w @rudiment/api
-npm run db:migrate -w @rudiment/api
+npm run db:generate
+npm run db:migrate
+npm run seed:plans
 ```
 
 ### 5. Desarrollo
@@ -77,8 +78,9 @@ npm run dev
 
 - Frontend: http://localhost:3000
 - API: http://localhost:4000
-- DB Studio: `npm run db:studio -w @rudiment/api`
+- DB Studio: `npm run db:studio`
 
 ## Fases de construcción
 
-Ver `docs/architecture.md` para el plan completo de 15 fases.
+- Ver [docs/architecture.md](./docs/architecture.md) para la auditoría de fases y el estado real del proyecto.
+- Ver [docs/deployment.md](./docs/deployment.md) para el checklist de Railway + Vercel.

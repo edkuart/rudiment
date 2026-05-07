@@ -4,7 +4,7 @@ import { env } from "../config/env.js";
 import * as schema from "./schema/index.js";
 
 export const pool = new Pool({
-  connectionString: env.DATABASE_URL,
+  ...(env.DATABASE_URL ? { connectionString: env.DATABASE_URL } : {}),
   max: 20,
   idleTimeoutMillis: 30_000,
   connectionTimeoutMillis: 2_000,

@@ -21,6 +21,13 @@ import "./modules/entitlements/index.js";
 
 const app = express();
 
+// ─── Liveness check ───────────────────────────────────────────────────────────
+// Railway health probes are server-to-server requests without an Origin header,
+// so keep this route before browser-focused middleware like CORS.
+app.get("/health", (_req, res) => {
+  res.json({ status: "ok", timestamp: new Date().toISOString() });
+});
+
 // ─── Security headers ─────────────────────────────────────────────────────────
 app.use(
   helmet({
@@ -47,7 +54,7 @@ const allowedOrigins = new Set([env.WEB_URL]);
 app.use(
   cors({
     origin: (origin, cb) => {
-      if (!origin && env.NODE_ENV !== "production") return cb(null, true);
+      if (!origin) return cb(null, true);
       if (origin && allowedOrigins.has(origin)) return cb(null, true);
       cb(new Error("CORS: origin not allowed"));
     },
@@ -76,14 +83,16 @@ app.use(express.urlencoded({ extended: true, limit: "100kb" }));
 app.use(cookieParser());
 app.use(requestLogger);
 
-// ─── Health checks ────────────────────────────────────────────────────────────
-// Railway uses /health to decide whether the container itself is alive. Keep it
-// independent from external services so a slow DB does not kill the deployment.
-app.get("/health", (_req, res) => {
-  res.json({ status: "ok", timestamp: new Date().toISOString() });
-});
-
 app.get("/ready", async (_req, res) => {
+  if (!env.DATABASE_URL) {
+    res.status(503).json({
+      status: "degraded",
+      db: "missing DATABASE_URL",
+      timestamp: new Date().toISOString(),
+    });
+    return;
+  }
+
   try {
     await db.execute(sql`SELECT 1`);
     res.json({ status: "ok", db: "ok", timestamp: new Date().toISOString() });
@@ -115,8 +124,9 @@ app.use((_req, res) => {
 app.use(errorHandler);
 
 // ─── Server ───────────────────────────────────────────────────────────────────
-const server = app.listen(env.PORT, () => {
-  logger.info(`Rudiment API running on port ${env.PORT} [${env.NODE_ENV}]`);
+const host = "0.0.0.0";
+const server = app.listen(env.PORT, host, () => {
+  logger.info(`Rudiment API running on ${host}:${env.PORT} [${env.NODE_ENV}]`);
 });
 
 // ─── Graceful shutdown ────────────────────────────────────────────────────────

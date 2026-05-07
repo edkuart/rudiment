@@ -76,8 +76,14 @@ app.use(express.urlencoded({ extended: true, limit: "100kb" }));
 app.use(cookieParser());
 app.use(requestLogger);
 
-// ─── Health check ─────────────────────────────────────────────────────────────
-app.get("/health", async (_req, res) => {
+// ─── Health checks ────────────────────────────────────────────────────────────
+// Railway uses /health to decide whether the container itself is alive. Keep it
+// independent from external services so a slow DB does not kill the deployment.
+app.get("/health", (_req, res) => {
+  res.json({ status: "ok", timestamp: new Date().toISOString() });
+});
+
+app.get("/ready", async (_req, res) => {
   try {
     await db.execute(sql`SELECT 1`);
     res.json({ status: "ok", db: "ok", timestamp: new Date().toISOString() });

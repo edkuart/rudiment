@@ -17,6 +17,7 @@ export interface CreateCourseInput {
   difficulty: Difficulty;
   accessType: AccessType;
   price?: number | undefined;
+  thumbnailUrl?: string | undefined;
   tags?: string[] | undefined;
 }
 
@@ -39,6 +40,11 @@ export interface CreateLessonInput {
 
 export interface UpdateLessonInput extends Partial<Omit<CreateLessonInput, "courseId">> {
   status?: LessonStatus | undefined;
+  bpmMin?: number | undefined;
+  bpmMax?: number | undefined;
+  timeSignature?: string | undefined;
+  techniques?: string[] | undefined;
+  styles?: string[] | undefined;
 }
 
 export interface ReorderLessonsInput {

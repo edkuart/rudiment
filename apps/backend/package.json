@@ -11,6 +11,7 @@
     "test": "vitest run --config vitest.config.ts",
     "test:watch": "vitest --config vitest.config.ts",
     "seed:plans": "tsx src/scripts/seed-plans.ts",
+    "seed:admin": "tsx src/scripts/seed-admin.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio"
@@ -23,6 +24,7 @@
     "@react-email/components": "^1.0.12",
     "@rudiment/types": "*",
     "@sentry/node": "^8.51.0",
+    "@types/multer": "^2.1.0",
     "bcryptjs": "^3.0.2",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -32,6 +34,7 @@
     "express-rate-limit": "^7.5.0",
     "helmet": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
+    "multer": "^2.1.1",
     "pg": "^8.13.1",
     "pino": "^9.6.0",
     "pino-pretty": "^13.0.0",

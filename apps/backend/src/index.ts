@@ -17,6 +17,7 @@ import { videoRouter, muxWebhookRouter } from "./modules/video/video.router.js";
 import { mediaRouter } from "./modules/media/media.router.js";
 import { progressRouter } from "./modules/progress/progress.router.js";
 import { analyticsRouter } from "./modules/analytics/analytics.router.js";
+import { uploadsRouter } from "./modules/uploads/uploads.router.js";
 import "./modules/entitlements/index.js";
 
 const app = express();
@@ -101,6 +102,12 @@ app.get("/ready", async (_req, res) => {
   }
 });
 
+// ─── Static uploads (dev) ─────────────────────────────────────────────────────
+app.use("/uploads", (_req, res, next) => {
+  res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+  next();
+}, express.static("uploads"));
+
 // ─── Routes ───────────────────────────────────────────────────────────────────
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/billing", billingRouter);
@@ -109,6 +116,7 @@ app.use("/api/v1/videos", videoRouter);
 app.use("/api/v1/media", mediaRouter);
 app.use("/api/v1/progress", progressRouter);
 app.use("/api/v1/analytics", analyticsRouter);
+app.use("/api/v1/uploads", uploadsRouter);
 app.use("/api/v1/webhooks/mux", muxWebhookRouter);
 
 // ─── 404 ──────────────────────────────────────────────────────────────────────

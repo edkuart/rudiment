@@ -50,6 +50,10 @@ export class CoursesService {
     return { ...course, tags };
   }
 
+  async getLessonsByCourse(courseId: string) {
+    return this.repo.findLessonsByCourse(courseId, true);
+  }
+
   async createCourse(input: CreateCourseInput) {
     const { tags, ...courseData } = input;
     const course = await this.repo.create(courseData);
@@ -104,7 +108,11 @@ export class CoursesService {
       if (!allowed) throw new ForbiddenError("Subscription required to access this lesson");
     }
 
-    return lesson;
+    const tagRows = await this.repo.getLessonTags(lessonId);
+    const techniques = tagRows.filter((t) => t.category === "technique").map((t) => t.name);
+    const styles = tagRows.filter((t) => t.category === "style").map((t) => t.name);
+
+    return { ...lesson, techniques, styles };
   }
 
   async getLessonsBySlugAndCourse(slug: string, courseSlug: string, userId?: string) {
@@ -136,7 +144,17 @@ export class CoursesService {
     const lesson = await this.repo.findLessonById(lessonId);
     if (!lesson) throw new NotFoundError("Lesson not found");
 
-    const updated = await this.repo.updateLesson(lessonId, input);
+    const { techniques, styles, ...coreInput } = input;
+    const updated = await this.repo.updateLesson(lessonId, coreInput);
+
+    if (techniques !== undefined) {
+      const tagRows = await this.repo.findOrCreateTagsByCategory(techniques, "technique");
+      await this.repo.setLessonTagsByCategory(lessonId, tagRows.map((t) => t.id), "technique");
+    }
+    if (styles !== undefined) {
+      const tagRows = await this.repo.findOrCreateTagsByCategory(styles, "style");
+      await this.repo.setLessonTagsByCategory(lessonId, tagRows.map((t) => t.id), "style");
+    }
 
     if (input.status !== undefined) {
       await this.repo.updateTotalLessons(lesson.courseId);

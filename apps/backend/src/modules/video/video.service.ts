@@ -12,13 +12,31 @@ const PLAYBACK_TOKEN_TTL = 3600; // 1 hour in seconds
 export class VideoService {
   constructor(private readonly repo: VideoRepository) {}
 
+  // ─── Admin: list all assets ───────────────────────────────────────────────
+
+  async listAll() {
+    return this.repo.findAll();
+  }
+
   // ─── Direct upload ────────────────────────────────────────────────────────
 
   async createDirectUpload(lessonId: string): Promise<DirectUploadResult> {
+    if (!env.MUX_TOKEN_ID || !env.MUX_TOKEN_SECRET) {
+      throw new AppError(
+        503,
+        "MUX_NOT_CONFIGURED",
+        "Video service not configured. Add MUX_TOKEN_ID and MUX_TOKEN_SECRET to your environment variables.",
+      );
+    }
+
+    const isDev = env.NODE_ENV === "development";
+    const corsOrigin = isDev ? "*" : env.WEB_URL;
+    const playbackPolicy = isDev ? ["public" as const] : ["signed" as const];
+
     const upload = await mux.video.uploads.create({
-      cors_origin: env.WEB_URL,
+      cors_origin: corsOrigin,
       new_asset_settings: {
-        playback_policy: ["signed"],
+        playback_policy: playbackPolicy,
         encoding_tier: "smart",
       },
     });

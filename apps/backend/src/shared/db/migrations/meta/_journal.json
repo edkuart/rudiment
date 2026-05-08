@@ -8,6 +8,20 @@
       "when": 1778088906415,
       "tag": "0000_dapper_lightspeed",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1778175306415,
+      "tag": "0001_security_hardening",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1746662400000,
+      "tag": "0002_lesson_music_meta",
+      "breakpoints": true
     }
   ]
 }

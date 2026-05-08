@@ -12,6 +12,9 @@ const ctrl = new VideoController(service);
 
 export const videoRouter = Router();
 
+// Admin: list all video assets
+videoRouter.get("/", requireAuth, requireRole("ADMIN"), ctrl.listAll);
+
 // Admin: create a direct upload URL for a lesson
 videoRouter.post("/upload", requireAuth, requireRole("ADMIN"), ctrl.createUpload);
 

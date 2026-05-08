@@ -52,6 +52,7 @@ coursesRouter.post("/:id/sections", requireAuth, requireRole("ADMIN"), ctrl.crea
 // ─── Lessons ─────────────────────────────────────────────────────────────────
 // GET /courses/lessons/by-slug?courseSlug=xxx&lessonSlug=yyy
 coursesRouter.get("/lessons/by-slug", ctrl.getLessonBySlug);
+coursesRouter.get("/:id/lessons", requireAuth, requireRole("ADMIN"), ctrl.getLessonsByCourse);
 
 coursesRouter.post(
   "/:id/lessons",

@@ -33,9 +33,15 @@ Thumbs.db
 # IDE
 .vscode/settings.json
 .idea/
+.claude/
 
 # Testing
 coverage/
 
 # Drizzle
 drizzle/
+
+# Runtime uploads
+uploads/
+
+.vercel

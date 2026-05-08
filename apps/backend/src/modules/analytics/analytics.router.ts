@@ -14,3 +14,4 @@ analyticsRouter.use(requireAuth, requireRole("ADMIN"));
 analyticsRouter.get("/overview", ctrl.getOverview);
 analyticsRouter.get("/top-courses", ctrl.getTopCourses);
 analyticsRouter.get("/recent-signups", ctrl.getRecentSignups);
+analyticsRouter.get("/users", ctrl.listUsers);

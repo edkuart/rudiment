@@ -116,6 +116,7 @@ export class CoursesRepository {
         difficulty: input.difficulty,
         accessType: input.accessType,
         price: input.price,
+        thumbnailUrl: input.thumbnailUrl,
         status: "DRAFT",
       })
       .returning();
@@ -286,6 +287,54 @@ export class CoursesRepository {
       .returning({ id: tags.id, slug: tags.slug });
 
     return rows;
+  }
+
+  async findOrCreateTagsByCategory(tagNames: string[], category: string) {
+    if (tagNames.length === 0) return [];
+    const slugified = tagNames.map((name) => ({
+      name,
+      slug: slugify(`${category}-${name}`, { lower: true, strict: true }),
+      category,
+    }));
+    return this.db
+      .insert(tags)
+      .values(slugified)
+      .onConflictDoUpdate({ target: tags.slug, set: { name: sql`excluded.name` } })
+      .returning({ id: tags.id, slug: tags.slug, name: tags.name });
+  }
+
+  async setLessonTagsByCategory(lessonId: string, tagIds: string[], category: string) {
+    const existingInCategory = await this.db
+      .select({ tagId: lessonTags.tagId })
+      .from(lessonTags)
+      .innerJoin(tags, eq(lessonTags.tagId, tags.id))
+      .where(and(eq(lessonTags.lessonId, lessonId), eq(tags.category, category)));
+
+    if (existingInCategory.length > 0) {
+      await this.db
+        .delete(lessonTags)
+        .where(
+          and(
+            eq(lessonTags.lessonId, lessonId),
+            inArray(lessonTags.tagId, existingInCategory.map((r) => r.tagId)),
+          ),
+        );
+    }
+
+    if (tagIds.length > 0) {
+      await this.db
+        .insert(lessonTags)
+        .values(tagIds.map((tagId) => ({ lessonId, tagId })))
+        .onConflictDoNothing();
+    }
+  }
+
+  async getLessonTags(lessonId: string) {
+    return this.db
+      .select({ name: tags.name, category: tags.category })
+      .from(lessonTags)
+      .innerJoin(tags, eq(lessonTags.tagId, tags.id))
+      .where(eq(lessonTags.lessonId, lessonId));
   }
 
   async setCourseTags(courseId: string, tagIds: string[]) {

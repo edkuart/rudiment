@@ -2,65 +2,130 @@ import Link from "next/link";
 import { NavBar } from "@/components/marketing/NavBar";
 import { ScrollRevealInit } from "@/components/marketing/ScrollRevealInit";
 
-/* ─── Static data ─────────────────────────────────────────────────── */
+const HERO_STATS = [
+  { value: "128+", label: "lessons" },
+  { value: "14", label: "paths" },
+  { value: "4K", label: "video" },
+  { value: "90%", label: "completion" },
+];
 
-const WAVE_HEIGHTS = [
-  22, 48, 68, 38, 82, 54, 28, 64, 88, 42, 70, 32, 60, 78, 46, 24, 56, 72, 38,
-  84, 50, 30, 66, 44, 76, 36, 58, 26,
+const BENEFITS = [
+  {
+    title: "Sequenced paths",
+    body: "Groove, technique, reading and coordination in order.",
+  },
+  {
+    title: "Progress saved",
+    body: "Resume points and completion tracking stay private.",
+  },
+  {
+    title: "Serious practice",
+    body: "Lessons are built for repetition, not quick tricks.",
+  },
+  {
+    title: "Clean access",
+    body: "One membership, no ads, cancel anytime.",
+  },
 ];
 
 const COURSE_CARDS = [
   {
-    tag: "PATH · GROOVE",
-    num: "01",
-    thumbClass: "thumb-a",
-    difficulty: "Foundational",
-    lessons: "12 Lessons",
+    tag: "Groove",
     title: "Pocket Architecture",
-    subtitle: "Subdivision, dynamics and limb independence in a 4-piece kit.",
+    meta: "12 lessons",
+    level: "Foundational",
     progress: 67,
-    bars: [30, 60, 80, 46, 72, 38, 90, 54, 30, 64, 48, 78],
+    note: "Subdivision, dynamics and limb independence.",
   },
   {
-    tag: "PATH · TECHNIQUE",
-    num: "02",
-    thumbClass: "thumb-b",
-    difficulty: "Intermediate",
-    lessons: "18 Lessons",
+    tag: "Technique",
     title: "Hand Technique I",
-    subtitle: "Moeller, Free Stroke, finger control. From rebound to expression.",
+    meta: "18 lessons",
+    level: "Intermediate",
     progress: 34,
-    bars: [46, 24, 70, 52, 88, 34, 60, 76, 42, 58, 30, 82],
+    note: "Rebound, Moeller and finger control.",
   },
   {
-    tag: "PATH · COORDINATION",
-    num: "03",
-    thumbClass: "thumb-c",
-    difficulty: "Advanced",
-    lessons: "22 Lessons",
+    tag: "Coordination",
     title: "Polyrhythmic Mind",
-    subtitle: "3:2, 4:3, 5:4 — internalized as feel, not arithmetic.",
+    meta: "22 lessons",
+    level: "Advanced",
     progress: 12,
-    bars: [36, 74, 48, 82, 30, 66, 54, 88, 42, 58, 24, 78],
+    note: "3:2, 4:3 and 5:4 as feel.",
   },
   {
-    tag: "PATH · READING",
-    num: "04",
-    thumbClass: "thumb-d",
-    difficulty: "Foundational",
-    lessons: "16 Lessons",
+    tag: "Reading",
     title: "Reading Charts",
-    subtitle: "Slash, comp, kicks, hits — read a chart at a session, not a class.",
+    meta: "16 lessons",
+    level: "Foundational",
     progress: 0,
-    bars: [54, 36, 80, 42, 64, 28, 74, 50, 86, 38, 62, 46],
+    note: "Slash, comp, kicks and hits.",
   },
 ];
 
-/* ─── Inline SVG icons ────────────────────────────────────────────── */
+const METHOD_STEPS = [
+  {
+    num: "01",
+    title: "Pick a path",
+    body: "Start with the discipline you actually need this month.",
+  },
+  {
+    num: "02",
+    title: "Repeat one idea",
+    body: "Train the lesson, the drill and the play-along until it lands.",
+  },
+  {
+    num: "03",
+    title: "Return exactly there",
+    body: "Progress and resume points keep the next session obvious.",
+  },
+];
+
+const PLANS = [
+  {
+    name: "Monthly",
+    price: "$29",
+    cadence: "/ mo",
+    detail: "Full access. Cancel anytime.",
+  },
+  {
+    name: "Annual",
+    price: "$290",
+    cadence: "/ yr",
+    detail: "Best value for committed practice.",
+    featured: true,
+  },
+  {
+    name: "Lifetime",
+    price: "$199",
+    cadence: "once",
+    detail: "Permanent access to the academy.",
+  },
+];
+
+const FAQS = [
+  {
+    q: "Is Rudiment for beginners?",
+    a: "The first paths are foundational, but the product is aimed at adults who can already practice consistently.",
+  },
+  {
+    q: "Can I cancel monthly access?",
+    a: "Yes. Billing is handled in-app, and monthly members can cancel without contacting support.",
+  },
+  {
+    q: "What makes this different from YouTube?",
+    a: "The order. Rudiment turns lessons into paths, tracks progress and keeps every session tied to the next one.",
+  },
+  {
+    q: "Do I need a full kit?",
+    a: "Most paths are written for a standard kit, but technique and reading lessons can be practiced with a pad.",
+  },
+];
 
 function ArrowRight() {
   return (
     <svg
+      aria-hidden="true"
       width="14"
       height="14"
       viewBox="0 0 16 16"
@@ -73,11 +138,12 @@ function ArrowRight() {
   );
 }
 
-function Check({ size = 14 }: { size?: number }) {
+function Check() {
   return (
     <svg
-      width={size}
-      height={size}
+      aria-hidden="true"
+      width="14"
+      height="14"
       viewBox="0 0 16 16"
       fill="none"
       stroke="currentColor"
@@ -88,7 +154,13 @@ function Check({ size = 14 }: { size?: number }) {
   );
 }
 
-/* ─── Page ────────────────────────────────────────────────────────── */
+function PlayIcon() {
+  return (
+    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18" fill="currentColor">
+      <path d="M5 3.5v11l9-5.5z" />
+    </svg>
+  );
+}
 
 export default function HomePage() {
   return (
@@ -96,526 +168,109 @@ export default function HomePage() {
       <NavBar />
 
       <main>
-        {/* ══════════════════════════════════════════════
-            HERO
-        ══════════════════════════════════════════════ */}
-        <section
-          className="hero-section relative overflow-hidden border-b border-white/8 pb-20 pt-7"
-          id="top"
-        >
-          <div className="mkt-glow mkt-glow-brand" aria-hidden="true" />
-          <div className="mkt-glow mkt-glow-gold" aria-hidden="true" />
+        <section className="hero-section relative overflow-hidden border-b border-white/8 pb-16 pt-8" id="top">
+          <div className="mkt-shell relative grid items-center gap-12 pt-8 lg:grid-cols-[0.92fr_1.08fr]">
+            <div className="min-w-0 max-w-[700px]">
+              <div className="mb-5 inline-flex items-center gap-3">
+                <span className="eyebrow-tick" aria-hidden="true" />
+                <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--color-gold-400)]">
+                  Premium drum academy
+                </span>
+              </div>
 
-          <div className="relative mx-auto max-w-[1280px] px-8">
-            <div className="grid items-center gap-16 pt-10 lg:grid-cols-[1.15fr_0.95fr]">
-              {/* Left: Headline + stats */}
-              <div>
-                <div className="mb-[22px] inline-flex items-center gap-3">
-                  <span className="eyebrow-tick" aria-hidden="true" />
-                  <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--color-gold-400)]">
-                    Premium drum academy · Vol. 01
-                  </span>
-                </div>
+              <h1
+                className="font-[family-name:var(--font-display)] uppercase leading-[0.88] tracking-normal text-white"
+                style={{ fontSize: "clamp(58px, 9vw, 132px)" }}
+              >
+                Practice
+                <br />
+                with intent.
+              </h1>
 
-                <h1
-                  className="font-[family-name:var(--font-display)] uppercase text-white tracking-[-0.005em]"
-                  style={{ fontSize: "clamp(56px, 8.4vw, 132px)", lineHeight: "0.88" }}
-                >
-                  Practice
-                  <br />
-                  with intent.
-                  <br />
-                  <span className="text-[var(--color-gold-400)]">Publish</span> like a pro.
-                </h1>
+              <p className="mt-6 max-w-[34ch] text-[17px] leading-[1.6] text-[var(--text-2)] sm:max-w-[500px]">
+                Structured drum paths for adults.
+                <br />
+                Clear lessons, saved progress, fewer distractions.
+              </p>
 
-                <p className="mt-[26px] max-w-[520px] text-[17px] leading-[1.6] text-[var(--text-2)]">
-                  Rudiment is a structured library of audiovisual drum lessons for adults who
-                  already practice daily. No tricks, no algorithm tax — just the craft, in the
-                  order it should be learned.
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link href="/register" className="mkt-btn mkt-btn-primary mkt-btn-lg">
+                  Start membership
+                  <ArrowRight />
+                </Link>
+                <Link href="#library" className="mkt-btn mkt-btn-ghost mkt-btn-lg">
+                  View paths
+                </Link>
+              </div>
+
+              <div className="mt-10 grid max-w-[560px] grid-cols-2 border-y border-white/8 sm:grid-cols-4">
+                {HERO_STATS.map((stat) => (
+                  <div key={stat.label} className="stat-row-cell border-r border-white/8 px-4 py-5 last:border-r-0">
+                    <div className="font-[family-name:var(--font-display)] text-[38px] leading-none text-white">
+                      {stat.value}
+                    </div>
+                    <div className="mt-2 text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-3)]">
+                      {stat.label}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="min-w-0">
+              <ProductPreview />
+            </div>
+          </div>
+        </section>
+
+        <section className="border-b border-white/8 bg-black/[0.12]" aria-label="Rudiment benefits">
+          <div className="mkt-shell grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+            {BENEFITS.map((item) => (
+              <article key={item.title} className="border-b border-white/8 py-7 pr-8 last:border-b-0 sm:border-r sm:odd:border-r sm:[&:nth-child(3)]:border-b-0 lg:border-b-0 lg:last:border-r-0">
+                <h2 className="text-[15px] font-semibold text-white">{item.title}</h2>
+                <p className="mt-2 max-w-[28ch] text-[13px] leading-6 text-[var(--text-3)]">
+                  {item.body}
                 </p>
-
-                <div className="mt-8 flex flex-wrap gap-3">
-                  <Link href="/register" className="mkt-btn mkt-btn-primary mkt-btn-lg">
-                    Start Membership
-                    <ArrowRight />
-                  </Link>
-                  <Link href="/library" className="mkt-btn mkt-btn-ghost mkt-btn-lg">
-                    Explore the Library
-                  </Link>
-                </div>
-
-                {/* Stat row */}
-                <div
-                  className="mt-20 grid grid-cols-2 border-t border-b border-white/8 sm:grid-cols-4"
-                  aria-label="Platform statistics"
-                >
-                  {[
-                    { num: "128", unit: "+", label: "Structured lessons" },
-                    { num: "14", unit: "", label: "Curriculum paths" },
-                    { num: "90", unit: "%", label: "Completion trigger" },
-                    { num: "4K", unit: "", label: "Multi-angle video" },
-                  ].map((stat, i) => (
-                    <div
-                      key={stat.label}
-                      className="stat-row-cell border-r border-white/8 px-6 py-[22px] last:border-r-0"
-                      style={i === 1 ? { borderRight: "1px solid var(--hairline)" } : undefined}
-                    >
-                      <div
-                        className="font-[family-name:var(--font-display)] text-[44px] leading-none text-white"
-                      >
-                        {stat.num}
-                        {stat.unit && (
-                          <span className="ml-1 align-top text-[22px] text-[var(--color-gold-400)]">
-                            {stat.unit}
-                          </span>
-                        )}
-                      </div>
-                      <div className="mt-[10px] text-[11px] uppercase tracking-[0.16em] text-[var(--text-3)]">
-                        {stat.label}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Right: Session preview card */}
-              <div className="reveal">
-                <article className="session-card" aria-label="Lesson preview">
-                  {/* Card header */}
-                  <header className="mb-[18px] flex items-start justify-between gap-4">
-                    <div>
-                      <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--text-3)]">
-                        Now training
-                      </div>
-                      <div
-                        className="mt-2 font-[family-name:var(--font-display)] text-[32px] uppercase leading-none text-white"
-                      >
-                        Pocket Architecture
-                      </div>
-                    </div>
-                    <div className="inline-flex shrink-0 items-center gap-1.5 rounded-full border px-[10px] py-1.5 text-[11px] tracking-[0.06em] text-[var(--color-gold-400)] font-[family-name:var(--font-mono)]"
-                      style={{
-                        borderColor: "color-mix(in oklab, var(--color-gold-400) 30%, transparent)",
-                        background: "color-mix(in oklab, var(--color-gold-400) 8%, transparent)",
-                      }}
-                    >
-                      <span
-                        className="h-1.5 w-1.5 rounded-full bg-[var(--color-gold-500)]"
-                        style={{ boxShadow: "0 0 8px var(--color-gold-500)" }}
-                      />
-                      Lesson 08 / 12
-                    </div>
-                  </header>
-
-                  {/* Player */}
-                  <div
-                    className="rounded-[18px] border border-white/8 p-[14px]"
-                    style={{ background: "var(--color-surface-0)" }}
-                  >
-                    <div className="mb-3 flex items-center justify-between font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-[0.12em] text-[var(--text-3)]">
-                      <span>Path · Groove Foundations</span>
-                      <span>14:28 / 22:10</span>
-                    </div>
-
-                    {/* Video stage */}
-                    <div
-                      className="player-stage"
-                      role="img"
-                      aria-label="Lesson video preview placeholder"
-                    >
-                      {/* Timecode */}
-                      <span
-                        className="absolute left-[14px] top-[14px] rounded-[6px] border border-white/8 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-[0.16em] text-[var(--color-gold-400)] px-2 py-1"
-                        style={{ background: "rgba(0,0,0,0.4)" }}
-                      >
-                        PRIVATE STREAM · MUX
-                      </span>
-
-                      {/* Decorative rings */}
-                      <span
-                        className="absolute rounded-full border border-white/[0.12]"
-                        style={{ width: "64%", aspectRatio: "1", left: "18%", top: "12%" }}
-                      />
-                      <span
-                        className="absolute rounded-full border border-white/[0.18]"
-                        style={{ width: "38%", aspectRatio: "1", left: "31%", top: "24%" }}
-                      />
-                      <span
-                        className="absolute rounded-full"
-                        style={{
-                          width: "18%",
-                          aspectRatio: "1",
-                          left: "41%",
-                          top: "34%",
-                          background:
-                            "radial-gradient(circle, color-mix(in oklab, var(--color-gold-400) 50%, transparent), transparent 70%)",
-                          borderColor:
-                            "color-mix(in oklab, var(--color-gold-400) 35%, transparent)",
-                          border: "1px solid",
-                        }}
-                      />
-
-                      {/* Play button */}
-                      <span
-                        className="absolute left-1/2 top-1/2 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white/90"
-                        style={{
-                          color: "var(--color-surface-0)",
-                          boxShadow: "0 14px 40px rgba(0,0,0,0.5)",
-                        }}
-                        aria-hidden="true"
-                      >
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 16 16"
-                          fill="currentColor"
-                          style={{ transform: "translateX(2px)" }}
-                        >
-                          <path d="M4 3l9 5-9 5z" />
-                        </svg>
-                      </span>
-
-                      {/* Waveform */}
-                      <div
-                        className="absolute bottom-[14px] left-[14px] right-[14px] flex items-end gap-[3px]"
-                        style={{ height: "38px" }}
-                        aria-hidden="true"
-                      >
-                        {WAVE_HEIGHTS.map((h, i) => (
-                          <span
-                            key={i}
-                            className="waveform-bar flex-1"
-                            style={{ height: `${h}%` }}
-                          />
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Progress track */}
-                    <div className="player-progress-track" aria-hidden="true" />
-
-                    {/* Chips */}
-                    <div className="mt-[14px] grid grid-cols-3 gap-2">
-                      {[
-                        { v: "90%", l: "Completion trigger" },
-                        { v: "Mux", l: "Secure delivery" },
-                        { v: "Live", l: "Progress sync" },
-                      ].map((chip) => (
-                        <div
-                          key={chip.l}
-                          className="rounded-[12px] border border-white/8 p-[10px_12px]"
-                          style={{ background: "rgba(255,255,255,0.025)" }}
-                        >
-                          <div className="font-[family-name:var(--font-display)] text-[22px] text-white">
-                            {chip.v}
-                          </div>
-                          <div className="mt-1 text-[9.5px] uppercase tracking-[0.14em] text-[var(--text-3)]">
-                            {chip.l}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Flow list */}
-                  <div className="mt-[14px] grid gap-1.5">
-                    {[
-                      { label: "Choose a path", done: true },
-                      { label: "Train one concept deeply", done: true },
-                      { label: "Track wins by lesson", done: false },
-                      { label: "Return where you left off", done: false },
-                    ].map((step, i) => (
-                      <div
-                        key={step.label}
-                        className="flex items-center justify-between rounded-[12px] border border-white/8 px-[14px] py-3 text-[13px] text-[var(--text-2)]"
-                        style={{ background: "rgba(255,255,255,0.025)" }}
-                      >
-                        <span>{step.label}</span>
-                        <div className="flex items-center gap-[14px]">
-                          <span
-                            className="h-4 w-4 rounded-full border"
-                            style={
-                              step.done
-                                ? {
-                                    background: "var(--color-gold-400)",
-                                    borderColor: "var(--color-gold-400)",
-                                  }
-                                : { borderColor: "var(--hairline-strong)" }
-                            }
-                          />
-                          <span className="font-[family-name:var(--font-display)] text-[22px] leading-none text-[var(--color-gold-400)]">
-                            0{i + 1}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </article>
-              </div>
-            </div>
+              </article>
+            ))}
           </div>
         </section>
 
-        {/* ══════════════════════════════════════════════
-            TRUST BAR
-        ══════════════════════════════════════════════ */}
-        <section
-          className="border-b border-white/8"
-          style={{ background: "rgba(0,0,0,0.18)" }}
-          aria-label="Platform features"
-        >
-          <div className="mx-auto max-w-[1280px] px-8">
-            <div className="flex items-center justify-between gap-[18px] py-4 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-[0.16em] text-[var(--text-3)] overflow-x-auto md:h-16 md:py-0">
-              {[
-                {
-                  icon: (
-                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6">
-                      <path d="M8 1.5l5.5 2v4c0 3-2.4 5.6-5.5 6.5C4.9 13.1 2.5 10.5 2.5 7.5v-4z" />
-                    </svg>
-                  ),
-                  label: "Secure video delivery",
-                },
-                {
-                  icon: (
-                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6">
-                      <path d="M2 12V4M2 12h12M5 9V6M8 9V4M11 9V7" />
-                    </svg>
-                  ),
-                  label: "Progress tracking",
-                },
-                {
-                  icon: (
-                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6">
-                      <rect x="2" y="3" width="12" height="10" rx="1" />
-                      <path d="M2 6h12M5 9h2" />
-                    </svg>
-                  ),
-                  label: "Stripe billing",
-                },
-                {
-                  icon: (
-                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6">
-                      <path d="M3 3h10v10H3zM3 7h10M7 3v10" />
-                    </svg>
-                  ),
-                  label: "Admin publishing",
-                },
-                {
-                  icon: (
-                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6">
-                      <circle cx="8" cy="8" r="6" /><path d="M8 5v3l2 2" />
-                    </svg>
-                  ),
-                  label: "Resume points",
-                },
-                {
-                  icon: (
-                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6">
-                      <path d="M2 8l4 4 8-9" />
-                    </svg>
-                  ),
-                  label: "No ads, ever",
-                },
-              ].map((item, i) => (
-                <div key={item.label} className="contents">
-                  <span className="inline-flex shrink-0 items-center gap-[10px] whitespace-nowrap">
-                    <span className="text-[var(--color-gold-400)]">{item.icon}</span>
-                    {item.label}
-                  </span>
-                  {i < 5 && (
-                    <span className="h-1 w-1 shrink-0 rounded-full" style={{ background: "var(--hairline-strong)" }} />
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+        <section className="py-[96px] md:py-[72px]" id="library">
+          <div className="mkt-shell">
+            <SectionHead
+              eyebrow="Curriculum"
+              title="Train by path, not by playlist."
+              side="14 paths / 128 lessons"
+            />
 
-        {/* ══════════════════════════════════════════════
-            PROBLEMS / MANIFESTO
-        ══════════════════════════════════════════════ */}
-        <section className="py-[120px] md:py-[80px]" id="manifest">
-          <div className="mx-auto max-w-[1280px] px-8">
-            {/* Section head */}
-            <div className="mb-14 flex items-end justify-between gap-6 md:flex-col md:items-stretch">
-              <div className="max-w-[820px]">
-                <div className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--color-gold-400)]">
-                  The problem we solve
-                </div>
-                <h2
-                  className="mt-[14px] font-[family-name:var(--font-display)] uppercase leading-[0.92] text-white"
-                  style={{ fontSize: "clamp(40px, 5.6vw, 84px)" }}
-                >
-                  Most drum content is{" "}
-                  <span className="text-[var(--text-3)]">made for the algorithm.</span>
-                </h2>
-              </div>
-              <div className="font-[family-name:var(--font-mono)] text-right text-[11px] uppercase tracking-[0.18em] text-[var(--text-3)] min-w-[140px] md:text-left">
-                Manifesto
-                <br />
-                §01 · §02 · §03
-              </div>
-            </div>
-
-            {/* Problems grid */}
-            <div className="grid grid-cols-3 border-t border-b border-white/8 md:grid-cols-1">
-              {[
-                {
-                  num: "01",
-                  title: "Tutorials end at the hook.",
-                  body: "You see the pattern, you don't see the weeks of practice that make it sit in the pocket. Rudiment teaches the work, not the trick.",
-                  tag: "Long-form, structured craft",
-                },
-                {
-                  num: "02",
-                  title: "Playlists pretend to be paths.",
-                  body: "A row of unrelated videos doesn't compound. Each Rudiment path is sequenced — every lesson assumes the one before.",
-                  tag: "Curriculum, not catalog",
-                },
-                {
-                  num: "03",
-                  title: "Progress disappears.",
-                  body: "Bookmarks and likes are not practice. Rudiment tracks completion, resume points and time on tool — privately, by lesson.",
-                  tag: "Practice you can measure",
-                },
-              ].map((card, i) => (
-                <article
-                  key={card.num}
-                  className="problem-card-el reveal border-r border-white/8 px-8 py-9 transition-colors hover:bg-white/[0.02] last:border-r-0 md:border-r-0 md:border-b md:last:border-b-0"
-                >
-                  <div className="problem-num">{card.num}</div>
-                  <h3 className="mt-7 font-[family-name:var(--font-display)] text-[30px] uppercase leading-none text-white">
-                    {card.title}
-                  </h3>
-                  <p className="mt-[14px] max-w-[32ch] text-[15px] leading-[1.6] text-[var(--text-2)]">
-                    {card.body}
-                  </p>
-                  <div className="mt-7 inline-flex items-center gap-2 font-[family-name:var(--font-mono)] text-[10.5px] uppercase tracking-[0.16em] text-[var(--text-3)]">
-                    <span className="text-[var(--color-brand-500)]">→</span>
-                    {card.tag}
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ══════════════════════════════════════════════
-            LIBRARY PREVIEW
-        ══════════════════════════════════════════════ */}
-        <section className="pb-[120px] md:pb-[80px]" id="library">
-          <div className="mx-auto max-w-[1280px] px-8">
-            {/* Section head */}
-            <div className="mb-14 flex items-end justify-between gap-6 md:flex-col md:items-stretch">
-              <div className="max-w-[820px]">
-                <div className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--color-gold-400)]">
-                  What you'll train
-                </div>
-                <h2
-                  className="mt-[14px] font-[family-name:var(--font-display)] uppercase leading-[0.92] text-white"
-                  style={{ fontSize: "clamp(40px, 5.6vw, 84px)" }}
-                >
-                  A library, sequenced{" "}
-                  <span className="text-[var(--text-3)]">the way a drummer thinks.</span>
-                </h2>
-              </div>
-              <div className="font-[family-name:var(--font-mono)] text-right text-[11px] uppercase tracking-[0.18em] text-[var(--text-3)] min-w-[140px] md:text-left">
-                Library
-                <br />
-                14 paths · 128 lessons
-              </div>
-            </div>
-
-            {/* Course rail */}
-            <div
-              className="grid gap-5 overflow-x-auto pb-2"
-              style={{
-                gridTemplateColumns: "repeat(4, minmax(280px, 1fr))",
-                scrollSnapType: "x mandatory",
-              }}
-            >
-              {COURSE_CARDS.map((course) => (
-                <article
-                  key={course.num}
-                  className="course-card-el reveal overflow-hidden rounded-[24px] border border-white/8 transition-all hover:-translate-y-0.5 hover:border-white/[0.14] scroll-snap-align-start"
-                  style={{ background: "var(--color-surface-1)", scrollSnapAlign: "start" }}
-                >
-                  {/* Thumbnail */}
-                  <div
-                    className="relative border-b border-white/8"
-                    style={{ aspectRatio: "16/10", overflow: "hidden" }}
-                  >
-                    <div
-                      className="h-full w-full"
-                      style={{
-                        background:
-                          course.thumbClass === "thumb-a"
-                            ? "linear-gradient(135deg, oklch(0.32 0.14 18) 0%, oklch(0.12 0.02 260) 70%)"
-                            : course.thumbClass === "thumb-b"
-                              ? "linear-gradient(135deg, oklch(0.30 0.10 80) 0%, oklch(0.10 0.01 260) 70%)"
-                              : course.thumbClass === "thumb-c"
-                                ? "linear-gradient(135deg, oklch(0.22 0.09 220) 0%, oklch(0.11 0.02 260) 70%)"
-                                : "linear-gradient(135deg, oklch(0.28 0.06 320) 0%, oklch(0.10 0.02 260) 70%)",
-                      }}
-                    />
-                    {/* Tag */}
-                    <span
-                      className="absolute left-[14px] top-[14px] rounded-[6px] border border-white/[0.18] px-2 py-1 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-[0.16em] text-white/70 backdrop-blur-sm"
-                      style={{ background: "rgba(0,0,0,0.32)" }}
-                    >
+            <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              {COURSE_CARDS.map((course, index) => (
+                <article key={course.title} className="library-preview-card reveal">
+                  <div className="flex items-center justify-between">
+                    <span className="font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-[0.16em] text-[var(--color-gold-400)]">
                       {course.tag}
                     </span>
-                    {/* Number */}
-                    <span className="absolute right-4 top-[14px] font-[family-name:var(--font-display)] text-[38px] leading-none text-white/85">
-                      {course.num}
+                    <span className="font-[family-name:var(--font-display)] text-[32px] leading-none text-white/45">
+                      0{index + 1}
                     </span>
-                    {/* Waveform bars */}
-                    <div
-                      className="absolute bottom-4 left-4 right-4 flex items-end gap-[3px] opacity-70"
-                      style={{ height: "38px" }}
-                      aria-hidden="true"
-                    >
-                      {course.bars.map((h, i) => (
-                        <span
-                          key={i}
-                          className="flex-1 rounded-[1.5px] bg-white/55"
-                          style={{ height: `${h}%` }}
-                        />
-                      ))}
-                    </div>
                   </div>
-
-                  {/* Body */}
-                  <div className="p-[22px]">
-                    <div className="flex items-center gap-2 font-[family-name:var(--font-mono)] text-[10.5px] uppercase tracking-[0.14em] text-[var(--text-3)]">
-                      <span className="rounded-full border border-white/[0.14] px-2 py-0.5 text-[var(--text-2)]">
-                        {course.difficulty}
-                      </span>
-                      <span
-                        className="rounded-full border px-2 py-0.5 text-[var(--color-gold-400)]"
-                        style={{
-                          borderColor: "color-mix(in oklab, var(--color-gold-400) 30%, transparent)",
-                        }}
-                      >
-                        {course.lessons}
-                      </span>
-                    </div>
-                    <h3 className="mt-[14px] font-[family-name:var(--font-display)] text-[28px] uppercase leading-[1.02] text-white">
-                      {course.title}
-                    </h3>
-                    <p className="mt-2 text-[13px] text-[var(--text-3)]">{course.subtitle}</p>
-
-                    {/* Progress */}
-                    <div className="mt-5 flex items-center justify-between font-[family-name:var(--font-mono)] text-[10.5px] uppercase tracking-[0.14em] text-[var(--text-3)]">
-                      <span>Path progress</span>
+                  <h3 className="mt-8 font-[family-name:var(--font-display)] text-[34px] uppercase leading-none text-white">
+                    {course.title}
+                  </h3>
+                  <p className="mt-3 text-[13px] leading-6 text-[var(--text-3)]">{course.note}</p>
+                  <div className="mt-6 flex flex-wrap gap-2">
+                    <span className="metric-pill">{course.level}</span>
+                    <span className="metric-pill">{course.meta}</span>
+                  </div>
+                  <div className="mt-8">
+                    <div className="flex justify-between font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-[0.14em] text-[var(--text-3)]">
+                      <span>Progress</span>
                       <span>{course.progress}%</span>
                     </div>
-                    <div
-                      className="relative mt-2 h-0.5 rounded-sm"
-                      style={{ background: "var(--color-surface-3)" }}
-                    >
+                    <div className="mt-2 h-1 rounded-full bg-white/8">
                       <span
-                        className="course-progress-fill"
+                        className="block h-full rounded-full bg-[var(--color-gold-500)]"
                         style={{ width: `${course.progress}%` }}
                       />
                     </div>
@@ -624,374 +279,289 @@ export default function HomePage() {
               ))}
             </div>
 
-            {/* Rail footer */}
-            <div className="mt-9 flex items-center justify-between border-t border-white/8 pt-6">
-              <span className="font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-[0.16em] text-[var(--text-3)]">
-                Showing 4 of 14 paths
-              </span>
-              <Link
-                href="/library"
-                className="inline-flex items-center gap-2 text-[14px] font-medium text-[var(--color-gold-400)] hover:text-white transition-colors"
-              >
-                Explore the full library
+            <div className="mt-8 flex items-center justify-between border-t border-white/8 pt-6 sm:flex-col sm:items-start sm:gap-4">
+              <p className="font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-[0.16em] text-[var(--text-3)]">
+                Showing the first 4 paths
+              </p>
+              <Link href="/library" className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--color-gold-400)] hover:text-white">
+                Explore full library
                 <ArrowRight />
               </Link>
             </div>
           </div>
         </section>
 
-        {/* ══════════════════════════════════════════════
-            HOW IT WORKS
-        ══════════════════════════════════════════════ */}
-        <section className="pb-[120px] md:pb-[80px]" id="how">
-          <div className="mx-auto max-w-[1280px] px-8">
-            {/* Section head */}
-            <div className="mb-14 flex items-end justify-between gap-6 md:flex-col md:items-stretch">
-              <div className="max-w-[820px]">
-                <div className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--color-gold-400)]">
-                  How it works
-                </div>
-                <h2
-                  className="mt-[14px] font-[family-name:var(--font-display)] uppercase leading-[0.92] text-white"
-                  style={{ fontSize: "clamp(40px, 5.6vw, 84px)" }}
-                >
-                  Three steps.{" "}
-                  <span className="text-[var(--text-3)]">No funnel, no fluff.</span>
-                </h2>
-              </div>
-              <div className="font-[family-name:var(--font-mono)] text-right text-[11px] uppercase tracking-[0.18em] text-[var(--text-3)] min-w-[140px] md:text-left">
-                Daily practice
-                <br />
-                ~25 min sessions
-              </div>
-            </div>
+        <section className="pb-[96px] md:pb-[72px]" id="how">
+          <div className="mkt-shell">
+            <SectionHead
+              eyebrow="Method"
+              title="Simple enough to repeat daily."
+              side="25 min sessions"
+            />
 
-            {/* Steps grid */}
-            <div className="steps-grid grid grid-cols-3 border-t border-b border-white/8 md:grid-cols-1">
-              {[
-                {
-                  icon: (
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
-                      <path d="M3 6h12M3 12h18M3 18h10" />
-                      <circle cx="20" cy="6" r="2" />
-                      <circle cx="14" cy="18" r="2" />
-                    </svg>
-                  ),
-                  num: "Step 01",
-                  title: "Choose a path",
-                  body: "Pick a discipline — groove, technique, reading, coordination — and Rudiment sequences the lessons in order.",
-                },
-                {
-                  icon: (
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
-                      <circle cx="12" cy="12" r="9" />
-                      <circle cx="12" cy="12" r="4" />
-                      <circle cx="12" cy="12" r="1" fill="currentColor" />
-                    </svg>
-                  ),
-                  num: "Step 02",
-                  title: "Train one concept",
-                  body: "Each lesson is built for repeat practice — drills, examples, play-along stems and resume points down to the second.",
-                },
-                {
-                  icon: (
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
-                      <path d="M3 17l5-5 4 4 9-9" />
-                      <path d="M14 7h7v7" />
-                    </svg>
-                  ),
-                  num: "Step 03",
-                  title: "Track progress",
-                  body: "Completion fires at 90% watch time. See your week, your streak and your weakest concept — privately, never social.",
-                },
-              ].map((step, i) => (
-                <div
-                  key={step.num}
-                  className="step-el reveal relative z-[1] border-r border-white/8 p-11 last:border-r-0 md:border-r-0 md:border-b md:last:border-b-0"
-                  style={{ background: "var(--color-surface-0)" }}
-                >
-                  <div
-                    className="mb-[22px] flex h-14 w-14 items-center justify-center rounded-[14px] border text-[var(--color-gold-400)]"
-                    style={{
-                      borderColor: "var(--hairline-strong)",
-                      background: "linear-gradient(180deg, var(--color-surface-1), var(--color-surface-0))",
-                    }}
-                  >
-                    {step.icon}
-                  </div>
-                  <div className="font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-[0.18em] text-[var(--text-3)]">
+            <div className="mt-10 grid border-y border-white/8 md:grid-cols-3 sm:grid-cols-1">
+              {METHOD_STEPS.map((step) => (
+                <article key={step.num} className="reveal border-r border-white/8 p-8 last:border-r-0 sm:border-b sm:border-r-0 sm:last:border-b-0">
+                  <div className="font-[family-name:var(--font-display)] text-[72px] leading-none text-[var(--color-gold-400)]/75">
                     {step.num}
                   </div>
-                  <h4 className="mt-[10px] font-[family-name:var(--font-display)] text-[32px] uppercase leading-none text-white">
-                    {step.title}
-                  </h4>
-                  <p className="mt-3 max-w-[32ch] text-[14px] leading-[1.6] text-[var(--text-2)]">
+                  <h3 className="mt-6 text-[18px] font-semibold text-white">{step.title}</h3>
+                  <p className="mt-2 max-w-[30ch] text-[14px] leading-6 text-[var(--text-3)]">
                     {step.body}
                   </p>
-                </div>
+                </article>
               ))}
             </div>
           </div>
         </section>
 
-        {/* ══════════════════════════════════════════════
-            PRICING
-        ══════════════════════════════════════════════ */}
-        <section className="pb-[120px] md:pb-[80px]" id="pricing">
-          <div className="mx-auto max-w-[1280px] px-8">
-            <div className="grid items-start gap-16 lg:grid-cols-[0.95fr_1.4fr] md:gap-10 md:grid-cols-1">
-              {/* Copy */}
+        <section className="pb-[96px] md:pb-[72px]" id="pricing">
+          <div className="mkt-shell">
+            <div className="grid items-start gap-10 lg:grid-cols-[0.8fr_1.2fr]">
               <div>
                 <div className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--color-gold-400)]">
                   Membership
                 </div>
-                <h2
-                  className="mt-[14px] font-[family-name:var(--font-display)] uppercase leading-[0.95] text-white"
-                  style={{ fontSize: "clamp(40px, 5vw, 72px)" }}
-                >
-                  One library.{" "}
-                  <span className="text-[var(--text-3)]">No tiers.</span>
+                <h2 className="mt-4 font-[family-name:var(--font-display)] text-[64px] uppercase leading-[0.95] text-white sm:text-[52px]">
+                  One library.
+                  <br />
+                  No tiers.
                 </h2>
-                <p className="mt-[22px] max-w-[44ch] text-[16px] leading-[1.7] text-[var(--text-2)]">
-                  Every member gets every path, every lesson, every play-along — the same access
-                  whether you join for a month or for life. We don't gate the craft.
+                <p className="mt-5 max-w-[42ch] text-[15px] leading-7 text-[var(--text-2)]">
+                  Every plan opens the same paths, lessons and progress tools.
                 </p>
-                <ul className="mt-7 grid gap-[10px]">
-                  {[
-                    "Unlimited access to all paths",
-                    "Multi-angle 4K video, downloadable stems",
-                    "Private progress tracking, no social feed",
-                    "Cancel anytime, in-app",
-                  ].map((feat) => (
-                    <li key={feat} className="flex items-center gap-3 text-[14px] text-[var(--text-2)]">
+                <ul className="mt-7 grid gap-3">
+                  {["All paths included", "Private progress", "Secure checkout", "Cancel monthly anytime"].map((item) => (
+                    <li key={item} className="flex items-center gap-3 text-sm text-[var(--text-2)]">
                       <span className="text-[var(--color-gold-400)]">
                         <Check />
                       </span>
-                      {feat}
+                      {item}
                     </li>
                   ))}
                 </ul>
-                <div className="mt-9 flex flex-wrap gap-3">
-                  <Link href="/pricing" className="mkt-btn mkt-btn-gold mkt-btn-lg">
-                    View full pricing
-                  </Link>
-                  <a href="#" className="mkt-btn mkt-btn-ghost mkt-btn-lg">
-                    Read the FAQ
-                  </a>
-                </div>
               </div>
 
-              {/* Price cards */}
-              <div className="grid grid-cols-3 gap-[14px] sm:grid-cols-1">
-                {[
-                  {
-                    plan: "Monthly",
-                    price: "$29",
-                    per: "/ mo",
-                    note: "Full access, billed every 30 days. Cancel anytime, in-app.",
-                    foot: "Best for trial",
-                    featured: false,
-                    ribbon: null,
-                    footAccent: false,
-                  },
-                  {
-                    plan: "Annual",
-                    price: "$290",
-                    per: "/ yr",
-                    note: "Best rate for committed students. ~$24/mo, billed yearly.",
-                    foot: "Save 17%",
-                    featured: true,
-                    ribbon: "Recommended",
-                    footAccent: true,
-                  },
-                  {
-                    plan: "Lifetime",
-                    price: "$1,990",
-                    per: "once",
-                    note: "One payment. Permanent access to everything we ever publish.",
-                    foot: "Limited cohort",
-                    featured: false,
-                    ribbon: null,
-                    footAccent: false,
-                  },
-                ].map((card) => (
+              <div className="grid gap-4 md:grid-cols-3 sm:grid-cols-1">
+                {PLANS.map((plan) => (
                   <article
-                    key={card.plan}
-                    className={`price-card-el reveal relative rounded-[24px] border border-white/8 p-[26px_22px] transition-transform hover:-translate-y-0.5 hover:border-white/[0.14] ${
-                      card.featured ? "price-card-featured" : ""
+                    key={plan.name}
+                    className={`price-card-el reveal rounded-[20px] border p-6 ${
+                      plan.featured
+                        ? "border-[color-mix(in_oklab,var(--color-brand-500)_55%,transparent)] bg-[color-mix(in_oklab,var(--color-brand-700)_28%,var(--color-surface-1))]"
+                        : "border-white/8 bg-[var(--color-surface-1)]"
                     }`}
-                    style={!card.featured ? { background: "var(--color-surface-1)" } : undefined}
                   >
-                    {card.ribbon && (
-                      <div
-                        className="absolute right-[18px] top-[18px] rounded-[6px] border px-2 py-1 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-[0.18em] text-[var(--color-gold-400)]"
-                        style={{
-                          borderColor: "color-mix(in oklab, var(--color-gold-400) 35%, transparent)",
-                          background: "color-mix(in oklab, var(--color-gold-400) 8%, transparent)",
-                        }}
-                      >
-                        {card.ribbon}
-                      </div>
-                    )}
-                    <div
-                      className={`font-[family-name:var(--font-mono)] text-[10.5px] uppercase tracking-[0.18em] ${
-                        card.featured ? "text-[var(--color-gold-400)]" : "text-[var(--text-3)]"
-                      }`}
-                    >
-                      {card.plan}
+                    <div className="flex items-center justify-between gap-3">
+                      <h3 className="font-[family-name:var(--font-mono)] text-[10.5px] uppercase tracking-[0.18em] text-[var(--text-3)]">
+                        {plan.name}
+                      </h3>
+                      {plan.featured && (
+                        <span className="rounded-full border border-[color-mix(in_oklab,var(--color-gold-400)_35%,transparent)] px-2 py-1 font-[family-name:var(--font-mono)] text-[9px] uppercase tracking-[0.14em] text-[var(--color-gold-400)]">
+                          Best
+                        </span>
+                      )}
                     </div>
-                    <div className="mt-[18px] font-[family-name:var(--font-display)] text-[64px] leading-none text-white">
-                      {card.price}
-                      <span className="ml-1 font-[family-name:var(--font-sans)] text-[14px] normal-case tracking-normal text-[var(--text-3)]">
-                        {card.per}
+                    <p className="mt-6 font-[family-name:var(--font-display)] text-[60px] leading-none text-white">
+                      {plan.price}
+                      <span className="ml-1 font-[family-name:var(--font-sans)] text-sm normal-case text-[var(--text-3)]">
+                        {plan.cadence}
                       </span>
-                    </div>
-                    <p className="mt-[14px] text-[13px] leading-[1.55] text-[var(--text-2)]">
-                      {card.note}
                     </p>
-                    <div className="mt-[22px] flex items-center justify-between border-t border-white/8 pt-[18px] font-[family-name:var(--font-mono)] text-[10.5px] uppercase tracking-[0.14em]">
-                      <span
-                        style={
-                          card.footAccent ? { color: "var(--color-gold-400)" } : { color: "var(--text-3)" }
-                        }
-                      >
-                        {card.foot}
-                      </span>
-                      <span className="text-[var(--text-3)]">→</span>
-                    </div>
+                    <p className="mt-4 min-h-[44px] text-[13px] leading-6 text-[var(--text-3)]">
+                      {plan.detail}
+                    </p>
                   </article>
                 ))}
               </div>
             </div>
+
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link href="/pricing" className="mkt-btn mkt-btn-gold mkt-btn-lg">
+                View pricing
+              </Link>
+              <Link href="/register" className="mkt-btn mkt-btn-primary mkt-btn-lg">
+                Start membership
+                <ArrowRight />
+              </Link>
+            </div>
           </div>
         </section>
 
-        {/* ══════════════════════════════════════════════
-            FINAL CTA BAND
-        ══════════════════════════════════════════════ */}
-        <section
-          className="cta-band border-t border-b border-white/8 py-[140px] text-center md:py-[80px]"
-          style={{
-            background:
-              "radial-gradient(ellipse at center top, color-mix(in oklab, var(--color-brand-700) 36%, transparent), transparent 60%), var(--color-surface-0)",
-          }}
-        >
-          <div className="relative z-[1] mx-auto max-w-[1280px] px-8">
-            <div className="inline-block text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--color-gold-400)]">
-              Ready to begin
+        <section className="pb-[96px] md:pb-[72px]" id="faq">
+          <div className="mkt-shell grid gap-10 lg:grid-cols-[0.7fr_1.3fr]">
+            <div>
+              <div className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--color-gold-400)]">
+                FAQ
+              </div>
+              <h2 className="mt-4 font-[family-name:var(--font-display)] text-[60px] uppercase leading-none text-white">
+                Useful details,
+                <br />
+                only when needed.
+              </h2>
             </div>
-            <h2
-              className="mt-[22px] font-[family-name:var(--font-display)] uppercase leading-[0.86] text-white tracking-[-0.005em]"
-              style={{ fontSize: "clamp(56px, 9vw, 144px)" }}
-            >
-              Ready to train
-              <br />
-              <span className="text-[var(--color-gold-400)]">seriously?</span>
-            </h2>
-            <p className="mx-auto mt-6 max-w-[520px] text-[17px] leading-[1.6] text-[var(--text-2)]">
-              No trials, no tiers, no algorithm. One library, paced for adult drummers who already
-              practice every day.
+
+            <div className="border-t border-white/8">
+              {FAQS.map((item) => (
+                <details key={item.q} className="faq-item group border-b border-white/8 py-5">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-6 text-[16px] font-semibold text-white">
+                    {item.q}
+                    <span className="text-[var(--color-gold-400)] transition-transform group-open:rotate-45">
+                      +
+                    </span>
+                  </summary>
+                  <p className="mt-3 max-w-[62ch] text-[14px] leading-7 text-[var(--text-3)]">
+                    {item.a}
+                  </p>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="cta-band border-y border-white/8 py-[110px] text-center md:py-[76px]">
+          <div className="mkt-shell relative z-[1] max-w-[900px]">
+            <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--color-gold-400)]">
+              Ready to begin
             </p>
-            <div className="mt-[42px] inline-flex gap-3">
+            <h2
+              className="mt-5 font-[family-name:var(--font-display)] uppercase leading-[0.88] text-white"
+              style={{ fontSize: "clamp(58px, 9vw, 128px)" }}
+            >
+              Train with
+              <br />
+              a map.
+            </h2>
+            <p className="mx-auto mt-5 max-w-[520px] text-[16px] leading-7 text-[var(--text-2)]">
+              Start with a path, finish with a clearer practice habit.
+            </p>
+            <div className="mt-8 flex justify-center gap-3 sm:flex-col">
               <Link href="/register" className="mkt-btn mkt-btn-primary mkt-btn-lg">
-                Start Membership
+                Start membership
                 <ArrowRight />
               </Link>
               <Link href="/library" className="mkt-btn mkt-btn-ghost mkt-btn-lg">
-                Browse library first
+                Browse library
               </Link>
             </div>
           </div>
         </section>
       </main>
 
-      {/* ══════════════════════════════════════════════
-          FOOTER
-      ══════════════════════════════════════════════ */}
-      <footer style={{ background: "var(--color-surface-0)", padding: "72px 0 36px" }}>
-        <div className="mx-auto max-w-[1280px] px-8">
-          {/* Grid */}
-          <div className="grid grid-cols-[1.4fr_repeat(3,1fr)] gap-12 border-b border-white/8 pb-14 md:grid-cols-2 md:gap-10 sm:grid-cols-1">
-            {/* Brand */}
-            <div>
-              <Link
-                href="/"
-                className="inline-flex items-center gap-[10px] font-[family-name:var(--font-display)] text-[36px] tracking-[0.08em] text-[var(--color-gold-400)]"
-              >
-                <span className="logo-dot" aria-hidden="true" />
-                Rudiment
-              </Link>
-              <p className="mt-[14px] max-w-[36ch] text-[14px] leading-[1.6] text-[var(--text-3)]">
-                Practice with intent. Publish like a pro. A premium audiovisual academy for serious
-                drummers.
-              </p>
-            </div>
-
-            {/* Link columns */}
-            {[
-              {
-                heading: "Platform",
-                links: [
-                  { label: "Library", href: "/library" },
-                  { label: "How it works", href: "#how" },
-                  { label: "Pricing", href: "#pricing" },
-                  { label: "Changelog", href: "#" },
-                ],
-              },
-              {
-                heading: "Legal",
-                links: [
-                  { label: "Terms", href: "/terms" },
-                  { label: "Privacy", href: "/privacy" },
-                  { label: "Refunds", href: "#" },
-                  { label: "DMCA", href: "#" },
-                ],
-              },
-              {
-                heading: "Connect",
-                links: [
-                  { label: "Newsletter", href: "#" },
-                  { label: "Instagram", href: "#" },
-                  { label: "YouTube", href: "#" },
-                  { label: "Contact", href: "#" },
-                ],
-              },
-            ].map((col) => (
-              <div key={col.heading}>
-                <h5 className="mb-[18px] font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-[0.18em] text-[var(--text-3)]">
-                  {col.heading}
-                </h5>
-                <ul className="grid gap-[10px]">
-                  {col.links.map((link) => (
-                    <li key={link.label}>
-                      <a
-                        href={link.href}
-                        className="text-[14px] text-[var(--text-2)] hover:text-white transition-colors"
-                      >
-                        {link.label}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-
-          {/* Footer bar */}
-          <div className="mt-7 flex items-center justify-between font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-[0.14em] text-[var(--text-3)]">
-            <span>© 2026 Rudiment Studio</span>
-            <span className="inline-flex gap-[18px]">
-              <span>Mux delivery</span>
-              <span>·</span>
-              <span>Stripe billing</span>
-              <span>·</span>
-              <span>Built in Brooklyn</span>
-            </span>
-          </div>
-        </div>
-      </footer>
-
+      <Footer />
       <ScrollRevealInit />
     </>
+  );
+}
+
+function ProductPreview() {
+  return (
+    <article className="session-card max-w-full min-w-0" aria-label="Rudiment lesson preview">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="min-w-0">
+          <p className="font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-[0.18em] text-[var(--text-3)]">
+            Now training
+          </p>
+          <h2 className="mt-2 font-[family-name:var(--font-display)] text-[34px] uppercase leading-none text-white sm:text-[38px]">
+            Pocket Architecture
+          </h2>
+        </div>
+        <span className="lesson-pill rounded-full border border-[color-mix(in_oklab,var(--color-gold-400)_35%,transparent)] px-3 py-1.5 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-[0.12em] text-[var(--color-gold-400)]">
+          Lesson 08
+        </span>
+      </div>
+
+      <div className="mt-5 rounded-[18px] border border-white/8 bg-[var(--color-surface-0)] p-3">
+        <div className="player-stage" role="img" aria-label="Video lesson interface preview">
+          <span className="absolute left-4 top-4 rounded-md border border-white/10 bg-black/40 px-2 py-1 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-[0.14em] text-[var(--color-gold-400)]">
+            14:28 / 22:10
+          </span>
+          <span className="absolute left-1/2 top-1/2 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white text-[var(--color-surface-0)] shadow-2xl">
+            <PlayIcon />
+          </span>
+          <div className="absolute bottom-4 left-4 right-4 grid grid-cols-12 items-end gap-1" aria-hidden="true">
+            {[36, 58, 80, 44, 72, 52, 90, 64, 42, 76, 50, 68].map((height, index) => (
+              <span
+                key={index}
+                className="rounded-sm bg-[var(--color-gold-500)]/85"
+                style={{ height: `${height * 0.42}px` }}
+              />
+            ))}
+          </div>
+        </div>
+        <div className="player-progress-track" aria-hidden="true" />
+      </div>
+
+      <div className="mt-4 grid gap-2">
+        {["Train the groove", "Repeat the drill", "Save resume point"].map((item, index) => (
+          <div key={item} className="flex items-center justify-between rounded-[12px] border border-white/8 bg-white/[0.025] px-4 py-3">
+            <span className="text-[13px] text-[var(--text-2)]">{item}</span>
+            <span className="font-[family-name:var(--font-display)] text-[24px] leading-none text-[var(--color-gold-400)]">
+              0{index + 1}
+            </span>
+          </div>
+        ))}
+      </div>
+    </article>
+  );
+}
+
+function SectionHead({
+  eyebrow,
+  title,
+  side,
+}: {
+  eyebrow: string;
+  title: string;
+  side: string;
+}) {
+  return (
+    <div className="flex items-end justify-between gap-8 md:flex-col md:items-start">
+      <div className="max-w-[760px]">
+        <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--color-gold-400)]">
+          {eyebrow}
+        </p>
+        <h2 className="mt-4 font-[family-name:var(--font-display)] text-[clamp(38px,6vw,84px)] uppercase leading-[0.92] text-white">
+          {title}
+        </h2>
+      </div>
+      <p className="font-[family-name:var(--font-mono)] text-right text-[11px] uppercase tracking-[0.18em] text-[var(--text-3)] md:text-left">
+        {side}
+      </p>
+    </div>
+  );
+}
+
+function Footer() {
+  const links = [
+    { label: "Library", href: "/library" },
+    { label: "How it works", href: "#how" },
+    { label: "Pricing", href: "#pricing" },
+    { label: "Privacy", href: "/privacy" },
+    { label: "Terms", href: "/terms" },
+  ];
+
+  return (
+    <footer className="bg-[var(--color-surface-0)] py-10">
+      <div className="mkt-shell flex items-center justify-between gap-6 md:flex-col md:items-start">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-[10px] font-[family-name:var(--font-display)] text-[34px] tracking-[0.08em] text-[var(--color-gold-400)]"
+        >
+          <span className="logo-dot" aria-hidden="true" />
+          Rudiment
+        </Link>
+        <nav className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-[var(--text-3)]">
+          {links.map((link) => (
+            <a key={link.label} href={link.href} className="hover:text-white">
+              {link.label}
+            </a>
+          ))}
+        </nav>
+        <p className="font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-[0.14em] text-[var(--text-3)]">
+          © 2026 Rudiment Studio
+        </p>
+      </div>
+    </footer>
   );
 }

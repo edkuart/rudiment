@@ -18,7 +18,7 @@ export function ScrollRevealInit() {
 
     document
       .querySelectorAll(
-        ".reveal, .session-card, .price-card-el, .course-card-el, .step-el, .problem-card-el",
+        ".reveal, .price-card-el, .course-card-el, .step-el, .problem-card-el",
       )
       .forEach((el) => {
         el.classList.add("reveal");

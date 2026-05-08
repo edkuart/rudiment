@@ -4,6 +4,15 @@ import type { VideoService } from "./video.service.js";
 export class VideoController {
   constructor(private readonly service: VideoService) {}
 
+  listAll = async (_req: Request, res: Response, next: NextFunction) => {
+    try {
+      const assets = await this.service.listAll();
+      res.json({ data: assets });
+    } catch (err) {
+      next(err);
+    }
+  };
+
   createUpload = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { lessonId } = req.body as { lessonId: string };

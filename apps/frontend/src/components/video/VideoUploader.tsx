@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useCallback } from "react";
+import { UploadCloud, CheckCircle2, AlertCircle, Loader2, RefreshCw } from "lucide-react";
 import { fetchApiJson } from "@/lib/api-fetch";
 
 interface VideoUploaderProps {
@@ -12,37 +13,40 @@ interface VideoUploaderProps {
 interface UploadData {
   uploadId: string;
   uploadUrl: string;
+  videoAssetId: string;
 }
 
 type UploadState = "idle" | "requesting" | "uploading" | "processing" | "done" | "error";
 
 export function VideoUploader({ lessonId, currentStatus, onUploadComplete }: VideoUploaderProps) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [state, setState] = useState<UploadState>(
-    currentStatus === "READY" ? "done" : currentStatus === "PREPARING" ? "processing" : "idle",
-  );
+  const [state, setState] = useState<UploadState>(() => {
+    if (currentStatus === "READY") return "done";
+    if (currentStatus === "PREPARING") return "processing";
+    return "idle";
+  });
   const [progress, setProgress] = useState(0);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [dragging, setDragging] = useState(false);
 
-  const handleFile = async (file: File) => {
+  const handleFile = useCallback(async (file: File) => {
     if (!file.type.startsWith("video/")) {
-      setErrorMsg("Please select a video file");
+      setErrorMsg("Please select a video file (MP4, MOV, MKV…)");
+      setState("error");
       return;
     }
 
     setState("requesting");
     setErrorMsg(null);
+    setProgress(0);
 
     try {
-      // Step 1: Get a Mux direct upload URL from our API
       const { data } = await fetchApiJson<{ data: UploadData }>("/videos/upload", {
         method: "POST",
         auth: "required",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ lessonId }),
       });
 
-      // Step 2: Upload the file directly to Mux
       setState("uploading");
 
       await new Promise<void>((resolve, reject) => {
@@ -54,111 +58,160 @@ export function VideoUploader({ lessonId, currentStatus, onUploadComplete }: Vid
           if (e.lengthComputable) setProgress(Math.round((e.loaded / e.total) * 100));
         };
 
-        xhr.onload = () => (xhr.status < 400 ? resolve() : reject(new Error(`Upload failed: ${xhr.status}`)));
-        xhr.onerror = () => reject(new Error("Network error during upload"));
+        xhr.onload = () =>
+          xhr.status < 400 ? resolve() : reject(new Error(`Upload failed (HTTP ${xhr.status})`));
+        xhr.onerror = () => reject(new Error("Network error — check your connection and try again"));
         xhr.send(file);
       });
 
       setState("processing");
       setProgress(100);
       onUploadComplete?.();
-    } catch (err: any) {
+    } catch (err: unknown) {
       setState("error");
-      setErrorMsg(err.message ?? "Upload failed");
+      const msg = err instanceof Error ? err.message : "Upload failed";
+      setErrorMsg(msg);
     }
+  }, [lessonId, onUploadComplete]);
+
+  const onDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setDragging(false);
+    const file = e.dataTransfer.files[0];
+    if (file) void handleFile(file);
+  }, [handleFile]);
+
+  const reset = () => {
+    setState("idle");
+    setErrorMsg(null);
+    setProgress(0);
+    if (inputRef.current) inputRef.current.value = "";
   };
 
-  const STATUS_MAP: Record<string, { label: string; color: string }> = {
-    WAITING: { label: "Waiting", color: "text-[var(--text-3)]" },
-    PREPARING: { label: "Processing", color: "text-yellow-400" },
-    READY: { label: "Ready", color: "text-green-400" },
-    ERRORED: { label: "Error", color: "text-red-400" },
-  };
-
-  return (
-    <div className="space-y-3">
-      {/* Current status badge */}
-      {currentStatus && (
-        <div className="flex items-center gap-2">
-          <span className={`text-xs font-semibold ${STATUS_MAP[currentStatus]?.color ?? ""}`}>
-            ● {STATUS_MAP[currentStatus]?.label ?? currentStatus}
-          </span>
-        </div>
-      )}
-
-      {/* Upload area */}
-      {state === "idle" || state === "error" ? (
+  if (state === "idle" || state === "error") {
+    return (
+      <div className="space-y-3">
         <div
+          onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+          onDragLeave={() => setDragging(false)}
+          onDrop={onDrop}
           onClick={() => inputRef.current?.click()}
-          className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-[var(--surface-3)] p-8 transition-colors hover:border-[var(--brand)]/50 hover:bg-[var(--brand)]/5"
+          className={`flex cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-10 transition-all ${
+            dragging
+              ? "border-[var(--brand)] bg-[var(--brand)]/8"
+              : state === "error"
+              ? "border-red-500/40 hover:border-red-500/60"
+              : "border-[var(--surface-3)] hover:border-[var(--brand)]/50 hover:bg-[var(--brand)]/5"
+          }`}
         >
-          <span className="text-3xl">🎬</span>
-          <p className="text-sm font-medium text-[var(--text-1)]">Click to upload video</p>
-          <p className="text-xs text-[var(--text-3)]">MP4, MOV, or MKV — up to 10GB</p>
-          {errorMsg && <p className="text-xs text-red-400">{errorMsg}</p>}
-          <input
-            ref={inputRef}
-            type="file"
-            accept="video/*"
-            className="hidden"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) void handleFile(file);
-            }}
+          <div className={`rounded-full p-3 ${state === "error" ? "bg-red-500/10" : "bg-[var(--surface-2)]"}`}>
+            {state === "error"
+              ? <AlertCircle size={22} className="text-red-400" />
+              : <UploadCloud size={22} className="text-[var(--text-3)]" />
+            }
+          </div>
+          <div className="text-center">
+            <p className="text-sm font-semibold text-[var(--text-1)]">
+              {dragging ? "Drop to upload" : "Drag & drop or click to select"}
+            </p>
+            <p className="mt-0.5 text-xs text-[var(--text-3)]">MP4, MOV, MKV — up to 10 GB</p>
+          </div>
+          {errorMsg && (
+            <div className="flex items-center gap-2 rounded-lg bg-red-500/10 px-3 py-2 text-xs text-red-400 max-w-sm text-center">
+              {errorMsg}
+            </div>
+          )}
+        </div>
+        <input
+          ref={inputRef}
+          type="file"
+          accept="video/*"
+          className="hidden"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) void handleFile(file);
+          }}
+        />
+      </div>
+    );
+  }
+
+  if (state === "requesting") {
+    return (
+      <div className="flex items-center gap-3 rounded-xl border border-[var(--surface-2)] bg-[var(--surface-1)] p-4">
+        <Loader2 size={18} className="animate-spin text-[var(--brand)]" />
+        <div>
+          <p className="text-sm font-medium text-[var(--text-1)]">Preparing upload…</p>
+          <p className="text-xs text-[var(--text-3)]">Getting upload URL from server</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (state === "uploading") {
+    return (
+      <div className="space-y-3 rounded-xl border border-[var(--surface-2)] bg-[var(--surface-1)] p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Loader2 size={14} className="animate-spin text-[var(--brand)]" />
+            <p className="text-sm font-medium text-[var(--text-1)]">Uploading video…</p>
+          </div>
+          <span className="tabular-nums text-sm font-semibold text-[var(--brand)]">{progress}%</span>
+        </div>
+        <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--surface-3)]">
+          <div
+            className="h-full rounded-full bg-[var(--brand)] transition-all duration-300"
+            style={{ width: `${progress}%` }}
           />
         </div>
-      ) : state === "requesting" ? (
-        <StatusBanner icon="⏳" message="Preparing upload…" />
-      ) : state === "uploading" ? (
-        <div className="space-y-2 rounded-xl border border-[var(--surface-2)] bg-[var(--surface-1)] p-4">
-          <div className="flex justify-between text-xs text-[var(--text-2)]">
-            <span>Uploading to Mux…</span>
-            <span>{progress}%</span>
-          </div>
-          <div className="h-1.5 w-full overflow-hidden rounded-full bg-[var(--surface-3)]">
-            <div
-              className="h-full rounded-full bg-[var(--brand)] transition-all"
-              style={{ width: `${progress}%` }}
-            />
+        <p className="text-xs text-[var(--text-3)]">Don't close this tab while uploading</p>
+      </div>
+    );
+  }
+
+  if (state === "processing") {
+    return (
+      <div className="rounded-xl border border-yellow-500/20 bg-yellow-500/5 p-4">
+        <div className="flex items-start gap-3">
+          <Loader2 size={18} className="mt-0.5 animate-spin text-yellow-400 shrink-0" />
+          <div>
+            <p className="text-sm font-medium text-[var(--text-1)]">Processing your video</p>
+            <p className="mt-0.5 text-xs text-[var(--text-3)]">
+              Mux is transcoding your video. This can take a few minutes. You can leave this page — the status will update automatically.
+            </p>
           </div>
         </div>
-      ) : state === "processing" ? (
-        <StatusBanner
-          icon="⚙️"
-          message="Mux is processing your video. This may take a few minutes."
-          hint="You'll see it in the lesson once it's ready."
-        />
-      ) : state === "done" ? (
-        <StatusBanner icon="✅" message="Video is ready for playback." success />
-      ) : null}
-    </div>
-  );
-}
-
-function StatusBanner({
-  icon,
-  message,
-  hint,
-  success,
-}: {
-  icon: string;
-  message: string;
-  hint?: string;
-  success?: boolean;
-}) {
-  return (
-    <div
-      className={`flex items-start gap-3 rounded-xl border p-4 ${
-        success
-          ? "border-green-500/20 bg-green-500/5"
-          : "border-[var(--surface-2)] bg-[var(--surface-1)]"
-      }`}
-    >
-      <span className="text-xl">{icon}</span>
-      <div>
-        <p className="text-sm text-[var(--text-1)]">{message}</p>
-        {hint && <p className="mt-0.5 text-xs text-[var(--text-3)]">{hint}</p>}
+        <button
+          onClick={reset}
+          className="mt-3 flex items-center gap-1.5 text-xs text-[var(--text-3)] hover:text-[var(--text-2)] transition-colors"
+        >
+          <RefreshCw size={11} />
+          Upload a different file
+        </button>
       </div>
-    </div>
-  );
+    );
+  }
+
+  if (state === "done") {
+    return (
+      <div className="rounded-xl border border-green-500/20 bg-green-500/5 p-4">
+        <div className="flex items-center gap-3">
+          <CheckCircle2 size={18} className="text-green-400 shrink-0" />
+          <div>
+            <p className="text-sm font-medium text-[var(--text-1)]">Video is ready</p>
+            <p className="mt-0.5 text-xs text-[var(--text-3)]">Transcoding complete — playback is available</p>
+          </div>
+        </div>
+        <button
+          onClick={reset}
+          className="mt-3 flex items-center gap-1.5 text-xs text-[var(--text-3)] hover:text-[var(--text-2)] transition-colors"
+        >
+          <RefreshCw size={11} />
+          Replace video
+        </button>
+      </div>
+    );
+  }
+
+  return null;
 }

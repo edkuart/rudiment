@@ -91,6 +91,16 @@ export class CoursesController {
     }
   };
 
+  getLessonsByCourse = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params as { id: string };
+      const lessons = await this.service.getLessonsByCourse(id);
+      res.json({ data: lessons });
+    } catch (err) {
+      next(err);
+    }
+  };
+
   createLesson = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params as { id: string };

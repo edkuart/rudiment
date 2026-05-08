@@ -15,7 +15,7 @@ export function NavBar() {
 
   return (
     <header className={`nav-bar sticky top-0 z-50 ${scrolled ? "scrolled" : ""}`}>
-      <div className="mx-auto flex max-w-[1280px] items-center justify-between px-8 h-[72px]">
+      <div className="mkt-shell flex h-[72px] items-center justify-between">
         {/* Logo */}
         <Link
           href="/"
@@ -46,7 +46,7 @@ export function NavBar() {
 
         {/* CTAs */}
         <div className="flex items-center gap-[10px]">
-          <Link href="/login" className="mkt-btn mkt-btn-ghost">
+          <Link href="/login" className="mkt-btn mkt-btn-ghost nav-sign-in">
             Sign in
           </Link>
           <Link href="/register" className="mkt-btn mkt-btn-primary nav-primary-cta">

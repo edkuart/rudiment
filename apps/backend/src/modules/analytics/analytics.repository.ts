@@ -83,4 +83,36 @@ export class AnalyticsRepository {
 
     return result.rows;
   }
+
+  async listUsers(opts: { page: number; limit: number; role?: string; search?: string }) {
+    const offset = (opts.page - 1) * opts.limit;
+    const roleFilter = opts.role && opts.role !== "ALL" ? sql`AND u.role = ${opts.role}` : sql``;
+    const searchFilter = opts.search
+      ? sql`AND (u.email ILIKE ${"%" + opts.search + "%"} OR u.display_name ILIKE ${"%" + opts.search + "%"})`
+      : sql``;
+
+    const countResult = await this.db.execute<{ total: string }>(sql`
+      SELECT COUNT(*)::text AS total FROM users u
+      WHERE deleted_at IS NULL ${roleFilter} ${searchFilter}
+    `);
+    const total = parseInt(countResult.rows[0]?.total ?? "0", 10);
+
+    const rows = await this.db.execute<{
+      id: string;
+      email: string;
+      display_name: string;
+      avatar_url: string | null;
+      role: string;
+      created_at: string;
+      last_seen_at: string | null;
+    }>(sql`
+      SELECT u.id, u.email, u.display_name, u.avatar_url, u.role, u.created_at, u.last_seen_at
+      FROM users u
+      WHERE u.deleted_at IS NULL ${roleFilter} ${searchFilter}
+      ORDER BY u.created_at DESC
+      LIMIT ${opts.limit} OFFSET ${offset}
+    `);
+
+    return { total, page: opts.page, limit: opts.limit, users: rows.rows };
+  }
 }

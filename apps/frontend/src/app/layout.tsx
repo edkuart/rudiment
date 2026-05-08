@@ -1,7 +1,30 @@
 import type { Metadata } from "next";
 import { Bebas_Neue, JetBrains_Mono, Space_Grotesk } from "next/font/google";
+import { cookies } from "next/headers";
 import { Toaster } from "sonner";
+import { AuthProvider, type AuthUser } from "@/components/auth/AuthProvider";
 import "@/styles/globals.css";
+
+function decodeJwtPayload(token: string): AuthUser | null {
+  try {
+    const part = token.split(".")[1];
+    if (!part) return null;
+    const json = Buffer.from(
+      part.replace(/-/g, "+").replace(/_/g, "/"),
+      "base64",
+    ).toString("utf8");
+    const p = JSON.parse(json) as Record<string, unknown>;
+    if (!p.sub || !p.email || !p.role) return null;
+    return {
+      id: p.sub as string,
+      email: p.email as string,
+      role: p.role as string,
+      displayName: (p.displayName as string | undefined) ?? "",
+    };
+  } catch {
+    return null;
+  }
+}
 
 const sans = Space_Grotesk({
   subsets: ["latin"],
@@ -40,16 +63,22 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("rudiment_access")?.value ?? null;
+  const initialUser = accessToken ? decodeJwtPayload(accessToken) : null;
+
   return (
     <html lang="en" className={`${sans.variable} ${display.variable} ${mono.variable}`}>
       <body>
-        {children}
-        <Toaster position="top-right" theme="dark" richColors />
+        <AuthProvider initialUser={initialUser}>
+          {children}
+          <Toaster position="top-right" theme="dark" richColors />
+        </AuthProvider>
       </body>
     </html>
   );

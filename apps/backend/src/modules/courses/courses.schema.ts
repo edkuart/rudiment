@@ -14,6 +14,7 @@ export const createCourseSchema = z.object({
     difficulty: difficulty.default("ALL"),
     accessType: accessType.default("SUBSCRIPTION"),
     price: z.number().int().positive().optional(),
+    thumbnailUrl: z.string().url().optional(),
     tags: z.array(z.string()).max(10).optional(),
   }),
 });
@@ -57,6 +58,11 @@ export const updateLessonSchema = z.object({
     isFreePreview: z.boolean().optional(),
     estimatedDuration: z.number().int().positive().optional(),
     status: lessonStatus.optional(),
+    bpmMin: z.number().int().min(20).max(400).optional(),
+    bpmMax: z.number().int().min(20).max(400).optional(),
+    timeSignature: z.string().max(10).optional(),
+    techniques: z.array(z.string().max(60)).max(20).optional(),
+    styles: z.array(z.string().max(60)).max(20).optional(),
   }),
 });
 

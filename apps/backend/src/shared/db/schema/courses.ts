@@ -95,6 +95,9 @@ export const lessons = pgTable("lessons", {
   position: integer("position").notNull().default(0),
   isFreePreview: boolean("is_free_preview").notNull().default(false),
   estimatedDuration: integer("estimated_duration"), // minutos
+  bpmMin: integer("bpm_min"),
+  bpmMax: integer("bpm_max"),
+  timeSignature: text("time_signature"),
   publishedAt: timestamp("published_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),

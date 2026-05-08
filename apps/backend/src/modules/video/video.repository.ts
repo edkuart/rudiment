@@ -1,10 +1,17 @@
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import type { Db } from "../../shared/db/index.js";
 import { videoAssets } from "../../shared/db/schema/index.js";
 import type { VideoAssetStatus } from "./video.types.js";
 
 export class VideoRepository {
   constructor(private readonly db: Db) {}
+
+  async findAll() {
+    return this.db.query.videoAssets.findMany({
+      orderBy: [desc(videoAssets.createdAt)],
+      with: { lesson: { columns: { id: true, title: true, courseId: true } } },
+    });
+  }
 
   async findByLessonId(lessonId: string) {
     return this.db.query.videoAssets.findFirst({
